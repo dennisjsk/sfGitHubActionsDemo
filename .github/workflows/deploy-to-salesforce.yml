@@ -13,9 +13,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Install Salesforce CLI
       - name: Install Salesforce CLI
         run: |
+            echo "Installing Salesforce CLI..."
             wget https://developer.salesforce.com/media/salesforce-cli/sfdx/channels/stable/sfdx-linux-x64.tar.xz
                   mkdir ~/sfdx
                   tar xJf sfdx-linux-x64.tar.xz -C ~/sfdx --strip-components 1
@@ -27,10 +27,12 @@ jobs:
         run: |
             echo ${{ secrets.SF_AUTH_URL}} > ./SF_AUTH_URL.txt
 
-      - name: 'Authenticate to INT Sandbox'
-        run: sfdx auth:sfdxurl:store -f ./SF_AUTH_URL.txt -s -a INT
+      - name: 'Authenticate MBAM_INT Sandbox'
+        run: |
+            echo "Authenticating to MBAM_INT Sandbox..."
+            sf org login sfdx-url --alias=MBAM_INT --sfdx-url-file=./SF_AUTH_URL.txt --set-default
 
       - name: Deploy Metadata
         run: |
-          echo "Deploying metadata to Salesforce..."
-          sfdx force:source:deploy -p path/force-app/main --testlevel RunLocalTests
+            echo "Validating metadata..."
+            sf project deploy start --source-dir=force-app/main --test-level=RunLocalTests --dry-run
