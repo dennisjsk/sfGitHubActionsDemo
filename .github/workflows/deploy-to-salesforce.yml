@@ -28,7 +28,7 @@ jobs:
             echo ${{ secrets.SF_AUTH_URL}} > ./SF_AUTH_URL.txt
 
       - name: 'Authenticate to INT Sandbox'
-        run: sfdx auth:sfdxurl:store -f ./SFDX_INTEGRATION_URL.txt -s -a INT
+        run: sfdx auth:sfdxurl:store -f ./SF_AUTH_URL.txt -s -a INT
 
       - name: Deploy Metadata
         run: |
