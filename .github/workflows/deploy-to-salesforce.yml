@@ -1,9 +1,9 @@
 name: Deploy to Salesforce Sandbox
 
 on:
-  push:
-    branches:
-      - main  
+    pull_request:
+      types: [opened, synchronize]
+      branches: [ main ] 
 
 jobs:
   deploy:
@@ -11,28 +11,26 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       # Install Salesforce CLI
       - name: Install Salesforce CLI
         run: |
-            wget https://developer.salesforce.com/media/salesforce-cli/sfdx-linux-amd64.tar.xz
-            mkdir sfdx-cli
-            tar xJf sfdx-linux-amd64.tar.xz -C sfdx-cli --strip-components 1
-            ./sfdx-cli/install
+            wget https://developer.salesforce.com/media/salesforce-cli/sfdx/channels/stable/sfdx-linux-x64.tar.xz
+                  mkdir ~/sfdx
+                  tar xJf sfdx-linux-x64.tar.xz -C ~/sfdx --strip-components 1
+                  echo "$HOME/sfdx/bin" >> $GITHUB_PATH
+                  ~/sfdx/bin/sfdx version
 
-      - name: Authenticate to Salesforce
-        env:
-          SF_CLIENT_ID: ${{ secrets.SF_CLIENT_ID }}
-          SF_USERNAME: ${{ secrets.SF_USERNAME }}
-          SF_PRIVATE_KEY: ${{ secrets.SF_PRIVATE_KEY }}
-          SF_LOGIN_URL: https://test.salesforce.com  # Use https://login.salesforce.com for production
+      - name: 'Populate auth file with SFDX_URL secret of integration org'
+        shell: bash
         run: |
-          echo "Authenticating to Salesforce..."
-          echo "$SF_PRIVATE_KEY" > private_key.pem
-          sfdx force:auth:jwt:grant --clientid $SF_CLIENT_ID --username $SF_USERNAME --jwtkeyfile private_key.pem --setdefaultdevhubusername --setalias myDevHub
+            echo ${{ secrets.SF_AUTH_URL}} > ./SF_AUTH_URL.txt
+
+      - name: 'Authenticate to INT Sandbox'
+        run: sfdx auth:sfdxurl:store -f ./SFDX_INTEGRATION_URL.txt -s -a INT
 
       - name: Deploy Metadata
         run: |
           echo "Deploying metadata to Salesforce..."
-          sfdx force:source:deploy -p path/to/your/metadata --testlevel RunLocalTests
+          sfdx force:source:deploy -p path/force-app/main --testlevel RunLocalTests
