@@ -35,7 +35,8 @@ jobs:
             sf org login sfdx-url --alias=MBAM_INT --sfdx-url-file=./SF_AUTH_URL.txt --set-default
 
       - name: Run on PR Create
-        if: github.event_name == 'pull_request' && github.ref == 'refs/heads/main'  # This step runs only on PR creation
+        # if: github.event_name == 'pull_request' && github.ref == 'refs/heads/main'  # This step runs only on PR creation
+        if: github.event_name == 'pull_request' && github.event.pull_request.base.ref == 'main'  # This step runs only on PR creation
         run: |
             echo "Validating metadata against INT sandbox..."
             sf project deploy start --source-dir=force-app/main --test-level=RunLocalTests --dry-run
