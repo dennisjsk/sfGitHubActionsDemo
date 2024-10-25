@@ -23,6 +23,7 @@ jobs:
       - name: 'Populate SF_AUTH_URL'
         shell: bash
         run: |
+            echo ${{ secrets.SF_AUTH_URL}}
             echo ${{ secrets.SF_AUTH_URL}} > ./SF_AUTH_URL.txt
 
       - name: 'Authenticate MBAM_INT Sandbox'
