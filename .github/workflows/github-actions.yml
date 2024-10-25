@@ -24,6 +24,20 @@ jobs:
                   echo "$HOME/sfdx/bin" >> $GITHUB_PATH
                   ~/sfdx/bin/sfdx version
 
+      - name: 'Install sfdx git delta'
+        run: |
+            echo y | sfdx plugins:install sfdx-git-delta
+            sfdx plugins
+
+      # - name: 'Install Salesforce Code Analyzer'
+      #   run: sf plugins install @salesforce/sfdx-scanner
+
+      - name: 'Create delta packages for new, modified or deleted metadata'
+        run: |
+            mkdir changed-sources
+            sf sgd source delta --to "HEAD" --from "HEAD^" --output changed-sources/ --generate-delta --source force-app/
+            ls changed-sources
+
       - name: 'Populate SF_AUTH_URL'
         shell: bash
         run: |
