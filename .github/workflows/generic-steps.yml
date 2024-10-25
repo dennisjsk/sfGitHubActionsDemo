@@ -1,17 +1,15 @@
-name: Validate/Deploy Metadata
+name: Generic Steps
 
 on:
-    pull_request:
-      types: [opened, synchronize]
-      branches: [ main ]
+  workflow_call:
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install Salesforce CLI
         run: |
@@ -31,8 +29,3 @@ jobs:
         run: |
             echo "Authenticating to MBAM_INT Sandbox..."
             sf org login sfdx-url --alias=MBAM_INT --sfdx-url-file=./SF_AUTH_URL.txt --set-default
-
-      - name: Deploy Metadata
-        run: |
-            echo "Validating metadata..."
-            sf project deploy start --source-dir=force-app/main --test-level=RunLocalTests --dry-run
