@@ -1,10 +1,14 @@
-name: Generic Steps
+name: Deploy/Deploy Metadata
 
 on:
-  workflow_call:
+  pull_request:
+    types: [opened, reopened, synchronize]  # Triggers on PR creation and updates
+  push:
+    branches:
+      - main  # Triggers on merge to main branch
 
 jobs:
-  build:
+  conditional-steps:
     runs-on: ubuntu-latest
 
     steps:
@@ -23,10 +27,21 @@ jobs:
       - name: 'Populate SF_AUTH_URL'
         shell: bash
         run: |
-            echo ${{ secrets.SF_AUTH_URL}}
             echo ${{ secrets.SF_AUTH_URL}} > ./SF_AUTH_URL.txt
 
       - name: 'Authenticate MBAM_INT Sandbox'
         run: |
             echo "Authenticating to MBAM_INT Sandbox..."
             sf org login sfdx-url --alias=MBAM_INT --sfdx-url-file=./SF_AUTH_URL.txt --set-default
+
+      - name: Run on PR Create
+        if: github.event_name == 'pull_request' && github.ref == 'refs/heads/main'  # This step runs only on PR creation
+        run: |
+            echo "Validating metadata against INT sandbox..."
+            sf project deploy start --source-dir=force-app/main --test-level=RunLocalTests --dry-run
+
+      - name: Run on PR Merge
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'  # This step runs only on PR merge to main
+        run: |
+            echo "Deploying metadata to INT sandbox..."
+            sf project deploy start --source-dir=force-app/main --test-level=RunLocalTests
