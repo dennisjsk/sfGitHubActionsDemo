@@ -1,9 +1,9 @@
-name: Deploy to Salesforce Sandbox
+name: Validate/Deploy Metadata
 
 on:
     pull_request:
       types: [opened, synchronize]
-      branches: [ main ] 
+      branches: [ main ]
 
 jobs:
   deploy:
@@ -22,7 +22,7 @@ jobs:
                   echo "$HOME/sfdx/bin" >> $GITHUB_PATH
                   ~/sfdx/bin/sfdx version
 
-      - name: 'Populate auth file with SFDX_URL secret of integration org'
+      - name: 'Populate SF_AUTH_URL'
         shell: bash
         run: |
             echo ${{ secrets.SF_AUTH_URL}} > ./SF_AUTH_URL.txt
