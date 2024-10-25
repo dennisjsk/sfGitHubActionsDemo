@@ -17,12 +17,17 @@ jobs:
 
       - name: Install Salesforce CLI
         run: |
-            echo "Installing Salesforce CLI..."
-            wget https://developer.salesforce.com/media/salesforce-cli/sfdx/channels/stable/sfdx-linux-x64.tar.xz
-                  mkdir ~/sfdx
-                  tar xJf sfdx-linux-x64.tar.xz -C ~/sfdx --strip-components 1
-                  echo "$HOME/sfdx/bin" >> $GITHUB_PATH
-                  ~/sfdx/bin/sfdx version
+            node --version
+            npm install @salesforce/cli --global
+
+      # - name: Install Salesforce CLI
+      #   run: |
+      #       echo "Installing Salesforce CLI..."
+      #       wget https://developer.salesforce.com/media/salesforce-cli/sfdx/channels/stable/sfdx-linux-x64.tar.xz
+      #             mkdir ~/sfdx
+      #             tar xJf sfdx-linux-x64.tar.xz -C ~/sfdx --strip-components 1
+      #             echo "$HOME/sfdx/bin" >> $GITHUB_PATH
+      #             ~/sfdx/bin/sfdx version
 
       # - name: 'Install sfdx git delta'
       #   run: |
