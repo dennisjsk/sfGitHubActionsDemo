@@ -29,17 +29,17 @@ jobs:
       #             echo "$HOME/sfdx/bin" >> $GITHUB_PATH
       #             ~/sfdx/bin/sfdx version
 
-      # - name: 'Install sfdx git delta'
-      #   run: |
-      #       echo y | sfdx plugins:install sfdx-git-delta
-      #       sfdx plugins
+      - name: 'Install sfdx git delta'
+        run: |
+            echo y | sf plugins:install sfdx-git-delta
+            sf plugins
 
-      # - name: 'Populate delta changes'
-      #   run: |
-      #       java --version
-      #       mkdir changed-sources
-      #       sf sgd source delta --to "HEAD" --from "HEAD~1" --output changed-sources/ --generate-delta
-      #       ls changed-sources
+      - name: 'Populate delta changes'
+        run: |
+            java --version
+            mkdir changed-sources
+            sf sgd source delta --to "HEAD" --from "HEAD~1" --output changed-sources/ --generate-delta
+            ls changed-sources
 
       - name: 'Install Salesforce Code Analyzer'
         run: sf plugins install @salesforce/sfdx-scanner
