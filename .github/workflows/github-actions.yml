@@ -7,6 +7,10 @@ on:
     branches:
       - main  # Triggers on merge to main branch
 
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
   conditional-steps:
     runs-on: ubuntu-latest
@@ -17,7 +21,6 @@ jobs:
 
       - name: Install Salesforce CLI
         run: |
-            node --version
             npm install @salesforce/cli --global
 
       # Temporarily disabled sfdx git until the plugin is updated to use sf commands instead of sfdx
@@ -39,12 +42,12 @@ jobs:
         run: |
             sf scanner run --format sarif --outfile CodeAnalyzerResults.sarif --target './**/*.cls' --category 'Design,Best Practices,Performance'
 
-      - name: Upload CodeAnalyzerResults
+      - name: Upload CodeAnalyzer results
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: CodeAnalyzerResults.sarif
 
-      - name: 'Populate SF_AUTH_URL'
+      - name: 'Populate Salesforce AUTH URL'
         shell: bash
         run: |
             echo ${{ secrets.SF_AUTH_URL}} > ./SF_AUTH_URL.txt
