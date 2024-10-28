@@ -38,7 +38,7 @@ jobs:
         run: |
             java --version
             mkdir changed-sources
-            sf sgd source delta --to "HEAD" --from "HEAD~1" --output changed-sources/ --generate-delta
+            sfdx sgd source delta --to "HEAD" --from "HEAD~1" --output changed-sources/ --generate-delta
             ls changed-sources
 
       - name: 'Install Salesforce Code Analyzer'
