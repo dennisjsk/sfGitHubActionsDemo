@@ -40,7 +40,7 @@ jobs:
             sf scanner run --format sarif --outfile CodeAnalyzerResults.sarif --target './**/*.cls' --category 'Design,Best Practices,Performance'
 
       - name: Upload CodeAnalyzerResults
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: CodeAnalyzerResults.sarif
 
