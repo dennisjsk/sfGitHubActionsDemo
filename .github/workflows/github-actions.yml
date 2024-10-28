@@ -20,39 +20,29 @@ jobs:
             node --version
             npm install @salesforce/cli --global
 
-      # - name: Install Salesforce CLI
-      #   run: |
-      #       echo "Installing Salesforce CLI..."
-      #       wget https://developer.salesforce.com/media/salesforce-cli/sfdx/channels/stable/sfdx-linux-x64.tar.xz
-      #             mkdir ~/sfdx
-      #             tar xJf sfdx-linux-x64.tar.xz -C ~/sfdx --strip-components 1
-      #             echo "$HOME/sfdx/bin" >> $GITHUB_PATH
-      #             ~/sfdx/bin/sfdx version
-
+      # Temporarily disabled sfdx git until the plugin is updated to use sf commands instead of sfdx
       # - name: 'Install sfdx git delta'
       #   run: |
-      #       echo y | sfdx plugins:install sfdx-git-delta
-      #       sfdx plugins
+      #       echo y | sf plugins:install sfdx-git-delta
+      #       sf plugins
 
       # - name: 'Populate delta changes'
       #   run: |
       #       java --version
       #       mkdir changed-sources
-      #       sf sgd source delta --to "HEAD" --from "HEAD~1" --output changed-sources/ --generate-delta
-      #       ls changed-sources
+      #       sfdx sgd source delta --to "HEAD" --from "HEAD~1" --output changed-sources/ --generate-delta
 
       - name: 'Install Salesforce Code Analyzer'
         run: sf plugins install @salesforce/sfdx-scanner
 
       - name: 'Analyze code'
         run: |
-            sf scanner run --format sarif --outfile CodeAnalyzerGeneral.sarif --target './**/*.cls' --category 'Design,Best Practices,Performance'
+            sf scanner run --format sarif --outfile CodeAnalyzerResults.sarif --target './**/*.cls' --category 'Design,Best Practices,Performance'
 
-      # Now we upload the .sarif file as explained in the previous step
-      - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@v2
+      - name: Upload CodeAnalyzerResults
+        uses: github/codeql-action/upload-sarif@v3
         with:
-          sarif_file: CodeAnalyzerGeneral.sarif
+          sarif_file: CodeAnalyzerResults.sarif
 
       - name: 'Populate SF_AUTH_URL'
         shell: bash
@@ -64,7 +54,7 @@ jobs:
             echo "Authenticating to MBAM_INT Sandbox..."
             sf org login sfdx-url --alias=MBAM_INT --sfdx-url-file=./SF_AUTH_URL.txt --set-default
 
-      - name: Run on PR Create
+      - name: Run on PR Create/Update
         if: github.event_name == 'pull_request' && github.event.pull_request.base.ref == 'main'  # This step runs only on PR creation
         run: |
             echo "Validating metadata against INT sandbox..."
