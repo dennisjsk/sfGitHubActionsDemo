@@ -47,6 +47,7 @@ jobs:
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: CodeAnalyzerResults.sarif
+          token: ${{ secrets.GITHUB_TOKEN }}  # Ensure the token is passed if needed
 
       - name: 'Populate Salesforce AUTH URL'
         shell: bash
