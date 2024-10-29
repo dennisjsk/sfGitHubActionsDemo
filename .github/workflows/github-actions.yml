@@ -8,8 +8,9 @@ on:
       - main  # Triggers on merge to main branch
 
 permissions:
-  contents: read
+  contents: write
   pull-requests: write
+  actions: read
 
 jobs:
   conditional-steps:
