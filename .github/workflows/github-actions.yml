@@ -24,6 +24,13 @@ jobs:
         run: |
             npm install @salesforce/cli --global
 
+      - name: Install SGD
+        run: echo y | sf plugins install "sfdx-git-delta@${{ vars.SGD_VERSION }}"
+
+      - name: 'Populate delta changes'
+        run: sf sgd source delta --to "HEAD" --from "origin/development" --output .
+
+
       # Temporarily disabled sfdx git until the plugin is updated to use sf commands instead of sfdx
       # - name: 'Install sfdx git delta'
       #   run: |
