@@ -76,4 +76,4 @@ jobs:
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'  # This step runs only on PR merge to main
         run: |
             echo "Deploying metadata to INT sandbox..."
-            sf project deploy start --source-dir=force-app/main --test-level=RunLocalTests
+            sf project deploy start --source-dir=force-app/main --test-level=RunLocalTests --dry-run
